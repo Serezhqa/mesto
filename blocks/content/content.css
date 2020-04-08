@@ -1,0 +1,10 @@
+.content {
+  width: 100%;
+  max-width: 882px;
+}
+
+@media screen and (max-width: 978px) {
+  .content {
+    max-width: calc(100% - 48px * 2);
+  }
+}

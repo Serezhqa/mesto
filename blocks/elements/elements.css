@@ -1,0 +1,24 @@
+@import url(__item/elements__item.css);
+@import url(__item/_bg/elements__item_bg_milan.css);
+@import url(__item/_bg/elements__item_bg_verona.css);
+@import url(__item/_bg/elements__item_bg_pompei.css);
+@import url(__item/_bg/elements__item_bg_sicily.css);
+@import url(__item/_bg/elements__item_bg_florence.css);
+@import url(__item/_bg/elements__item_bg_rome.css);
+@import url(__place/elements__place.css);
+@import url(__like-button/elements__like-button.css);
+
+.elements {
+  padding-top: 50px;
+  padding-bottom: 66px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 18px;
+  row-gap: 16px;
+}
+
+/* @media screen and (max-width: 930px) {
+  .elements {
+    grid-template-columns: repeat(2, 282px);
+  }
+} */

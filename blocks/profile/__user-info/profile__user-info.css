@@ -1,0 +1,8 @@
+.profile__user-info {
+  display: flex;
+  flex-direction: column;
+  padding-top: 18px;
+  padding-bottom: 24px;
+  padding-right: 18px;
+  box-sizing: border-box;
+}

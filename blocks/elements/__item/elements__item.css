@@ -1,0 +1,11 @@
+.elements__item {
+  border-radius: 10px;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-size: 100% 78%;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 31px;
+  box-sizing: border-box;
+  min-height: 361px;
+}
