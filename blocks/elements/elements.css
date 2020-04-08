@@ -12,13 +12,20 @@
   padding-top: 50px;
   padding-bottom: 66px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, 282px);
+  justify-content: center;
   column-gap: 18px;
   row-gap: 16px;
 }
 
-/* @media screen and (max-width: 930px) {
+@media screen and (max-width: 1023px) {
   .elements {
-    grid-template-columns: repeat(2, 282px);
+    column-gap: 108px;
   }
-} */
+}
+
+@media screen and (max-width: 767px) {
+  .elements {
+    column-gap: 18px;
+  }
+}

@@ -8,8 +8,14 @@
   min-height: 74px;
 }
 
-@media screen and (max-width: 978px) {
+@media screen and (max-width: 1023px) {
   .header {
-    max-width: calc(100% - 48px * 2);
+    max-width: 672px;
+  }
+}
+
+@media screen and (max-width: 424px) {
+  .header {
+    min-height: 56px;
   }
 }
