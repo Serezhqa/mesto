@@ -8,4 +8,4 @@
 5. медиазапросы;
 6. модальное окно, позволяющее с помощью JavaScript редактировать информацию о пользователе.
 
-Ссылка на GitHub Pages: [https://serezhqa.github.io/mesto/index.html]
+Ссылка на GitHub Pages: https://serezhqa.github.io/mesto/index.html
