@@ -20,7 +20,7 @@
         <div class="profile__info">
           <div class="profile__name-info">
             <p class="profile__name">Жак-Ив Кусто</p>
-            <button class="profile__edit-button" aria-label="Редактировать информацию о пользователе."></button>
+            <button class="profile__edit-button" type="button" aria-label="Редактировать информацию о пользователе."></button>
           </div>
           <p class="profile__description">Исследователь океана</p>
         </div>
@@ -58,12 +58,13 @@
     <footer class="footer">
       <p class="footer__copyright">&copy; 2020 Mesto Russia</p>
     </footer>
-    <div class="popup popup_opened">
+    <div class="popup">
       <form class="popup__container">
         <p class="popup__title">Редактировать профиль</p>
-        <input class="popup__input-item" type="text" value="Жак-Ив Кусто">
-        <input class="popup__input-item" type="text" value="Исследователь океана">
-        <button class="popup__button" type="submit">Сохранить</button>
+        <input class="popup__input-item" type="text">
+        <input class="popup__input-item" type="text">
+        <button class="popup__save-button">Сохранить</button>
+        <button class="popup__close-button" type="button" aria-label="Закрыть окно редактирования."></button>
       </form>
     </div>
   </div>
