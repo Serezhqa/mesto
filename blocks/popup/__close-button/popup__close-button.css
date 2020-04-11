@@ -2,13 +2,14 @@
   background-image: url(../../../images/close.svg);
   background-position: center;
   position: absolute;
-  top: -41px;
-  right: -41px;
-  width: 41px;
-  height: 41px;
+  top: -46px;
+  right: -46px;
+  width: 58px;
+  height: 58px;
   padding: 0;
   border: none;
   background-color: transparent;
+  transition: opacity .2s;
 }
 
 .popup__close-button:hover {

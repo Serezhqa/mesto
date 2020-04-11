@@ -1,11 +1,6 @@
 @import url(__item/elements__item.css);
-@import url(__item/_bg/elements__item_bg_milan.css);
-@import url(__item/_bg/elements__item_bg_verona.css);
-@import url(__item/_bg/elements__item_bg_pompei.css);
-@import url(__item/_bg/elements__item_bg_sicily.css);
-@import url(__item/_bg/elements__item_bg_florence.css);
-@import url(__item/_bg/elements__item_bg_rome.css);
-@import url(__place/elements__place.css);
+@import url(__image/elements__image.css);
+@import url(__heading/elements__heading.css);
 @import url(__like-button/elements__like-button.css);
 
 .elements {

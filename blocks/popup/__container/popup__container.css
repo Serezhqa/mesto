@@ -20,7 +20,7 @@
 
 @media screen and (max-width: 424px) {
   .popup__container {
-    flex-basis: calc(100% - 41px * 2);
+    flex-basis: calc(100% - 46px * 2);
     padding: 20px;
   }
 }
