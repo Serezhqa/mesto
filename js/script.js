@@ -83,6 +83,7 @@ function deleteCard(evt) {
 function openImage(evt) {
   togglePopup(openPhotoPopup);
   photo.src = evt.target.src;
+  photo.alt = evt.target.alt;
   heading.textContent = evt.target.parentElement.nextElementSibling.textContent;
 }
 
