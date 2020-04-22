@@ -1,8 +1,7 @@
-@import url(_hidden/popup_hidden.css);
-@import url(_opened/popup_opened.css);
 @import url(_type/popup_type_edit-info.css);
 @import url(_type/popup_type_add-photo.css);
 @import url(_type/popup_type_open-photo.css);
+@import url(_opened/popup_opened.css);
 @import url(__form/popup__form.css);
 @import url(__title/popup__title.css);
 @import url(__input-item/popup__input-item.css);

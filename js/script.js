@@ -25,6 +25,8 @@ const addButton = document.querySelector('.profile__add-button');
 const closeButtons = document.querySelectorAll('.popup__close-button');
 
 //Для начальной загрузки фотографий
+const cardTemplate = document.querySelector('#card-template').content;
+const elements = document.querySelector('.elements');
 const initialCards = [
   {
       name: 'Милан',
@@ -57,29 +59,47 @@ const initialCards = [
       alt: 'Руины древнего Рима.'
   }
 ];
-const elements = document.querySelector('.elements');
-const cardTemplate = document.querySelector('#card-template').content;
 
 
 
-//Добавление начальных фотокарточек при загрузке страницы
-for (let i = 0; i < initialCards.length; i++) {
-  let cardItem = cardTemplate.cloneNode(true);
-  cardItem.querySelector('.elements__image').src = initialCards[i].link;
-  cardItem.querySelector('.elements__image').alt = initialCards[i].alt;
-  cardItem.querySelector('.elements__heading').textContent = initialCards[i].name;
-  elements.append(cardItem);
+//Функции для создания/удаления карточки и начальной инициализации из массива
+function createCard(src, alt, text) {
+  const cardItem = cardTemplate.cloneNode(true);
+  cardItem.querySelector('.elements__image').src = src;
+  cardItem.querySelector('.elements__image').alt = alt;
+  cardItem.querySelector('.elements__heading').textContent = text;
+  cardItem.querySelector('.elements__like-button').addEventListener('click', toggleLike);
+  cardItem.querySelector('.elements__delete-button').addEventListener('click', deleteCard);
+  cardItem.querySelector('.elements__image-button').addEventListener('click', openImage);
+  return cardItem;
 }
-//Появились кнопки удаления, лайка и кнопка для раскрытия картинки - добавляем для них функции
-const likeButtons = document.querySelectorAll('.elements__like-button');
-const deleteButtons = document.querySelectorAll('.elements__delete-button');
-const imageButtons = document.querySelectorAll('.elements__image-button');
-function toggleLike(evt) {
-  evt.target.classList.toggle('elements__like-button_active');
+
+function renderCards(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    const cardItem = createCard(arr[i].link, arr[i].alt, arr[i].name);
+    elements.append(cardItem);
+  }
 }
+
 function deleteCard(evt) {
   evt.target.closest('.elements__item').remove();
 }
+
+//Для лайков
+function toggleLike(evt) {
+  evt.target.classList.toggle('elements__like-button_active');
+}
+
+//Открытие и закрытие форм
+function togglePopup(popup) {
+  popup.classList.toggle('popup_opened');
+}
+
+function closeButtonHandler(evt) {
+  togglePopup(evt.target.closest('.popup'));
+}
+
+//Для клика по картинке
 function openImage(evt) {
   togglePopup(openPhotoPopup);
   photo.src = evt.target.src;
@@ -87,23 +107,14 @@ function openImage(evt) {
   heading.textContent = evt.target.parentElement.nextElementSibling.textContent;
 }
 
-//Открытие и закрытие форм
-function togglePopup(popup) {
-  popup.classList.toggle('popup_hidden');
-  popup.classList.toggle('popup_opened');
-}
-function closeButtonHandler(evt) {
-  togglePopup(evt.target.closest('.popup'));
-}
-
-//Открытие формы "Редактировать профиль" с автозаполнением имеющихся данных
+//Для открытия формы "Редактировать профиль" с автозаполнением имеющихся данных
 function openEditInfoForm() {
   togglePopup(editInfoPopup);
   nameInput.value = profileName.textContent;
   descriptionInput.value = profileDescription.textContent;
 }
 
-//Сохранение введённых в форму "Редактировать профиль" данных и обновление их на странице
+//Для сохранения введённых в форму "Редактировать профиль" данных и обновления их на странице
 function editInfoFormSubmitHandler(evt) {
   evt.preventDefault();
   profileName.textContent = nameInput.value;
@@ -111,21 +122,21 @@ function editInfoFormSubmitHandler(evt) {
   togglePopup(editInfoPopup);
 }
 
-//Добавление фотокарточек с помощью формы "Новое место"
-function addPhotoFormSubmitHandler(evt) {
-  evt.preventDefault();
-  let cardItem = cardTemplate.cloneNode(true);
-  cardItem.querySelector('.elements__image').src = linkInput.value;
-  cardItem.querySelector('.elements__image').alt = placeInput.value;
-  cardItem.querySelector('.elements__heading').textContent = placeInput.value;
-  cardItem.querySelector('.elements__like-button').addEventListener('click', toggleLike);
-  cardItem.querySelector('.elements__delete-button').addEventListener('click', deleteCard);
-  cardItem.querySelector('.elements__image-button').addEventListener('click', openImage);
-  elements.prepend(cardItem);
+//Для добавления фотокарточек с помощью формы "Новое место"
+function addCard(card) {
+  elements.prepend(card);
   linkInput.value = '';
   placeInput.value = '';
+}
+
+function addPhotoFormSubmitHandler(evt) {
+  evt.preventDefault();
+  const cardItem = createCard(linkInput.value, placeInput.value, placeInput.value);
+  addCard(cardItem);
   togglePopup(addPhotoPopup);
 }
+
+
 
 //Слушатели событий
 editButton.addEventListener('click', openEditInfoForm);
@@ -135,12 +146,8 @@ addPhotoForm.addEventListener('submit', addPhotoFormSubmitHandler);
 closeButtons.forEach(function(button) {
   button.addEventListener('click', closeButtonHandler);
 });
-likeButtons.forEach(function(button) {
-  button.addEventListener('click', toggleLike);
-})
-deleteButtons.forEach(function(button) {
-  button.addEventListener('click', deleteCard);
-})
-imageButtons.forEach(function(button) {
-  button.addEventListener('click', openImage);
-})
+
+
+
+//Создание начальных карточек
+renderCards(initialCards);
