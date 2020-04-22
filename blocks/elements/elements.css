@@ -2,6 +2,8 @@
 @import url(__image/elements__image.css);
 @import url(__heading/elements__heading.css);
 @import url(__like-button/elements__like-button.css);
+@import url(__like-button/_active/elements__like-button_active.css);
+@import url(__delete-button/elements__delete-button.css);
 
 .elements {
   padding-top: 50px;
