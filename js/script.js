@@ -1,6 +1,6 @@
 //Для попапа "Редактировать профиль"
 const editInfoPopup = document.querySelector('.popup_type_edit-info');
-const editInfoForm = editInfoPopup.querySelector('.popup__form_type_edit-info');
+const editInfoForm = editInfoPopup.querySelector('.popup__form');
 const profileName = document.querySelector('.profile__name');
 const profileDescription = document.querySelector('.profile__description');
 const nameInput = editInfoPopup.querySelector('.popup__input-item_type_username');
@@ -8,9 +8,14 @@ const descriptionInput = editInfoPopup.querySelector('.popup__input-item_type_de
 
 //Для попапа "Новое место"
 const addPhotoPopup = document.querySelector('.popup_type_add-photo');
-const addPhotoForm = addPhotoPopup.querySelector('.popup__form_type_add-photo');
+const addPhotoForm = addPhotoPopup.querySelector('.popup__form');
 const placeInput = addPhotoPopup.querySelector('.popup__input-item_type_place');
 const linkInput = addPhotoPopup.querySelector('.popup__input-item_type_link');
+
+//Для попапа с увеличенным фото
+const openPhotoPopup = document.querySelector('.popup_type_open-photo');
+const photo = openPhotoPopup.querySelector('.popup__image');
+const heading = openPhotoPopup.querySelector('.popup__heading');
 
 //Все кнопки открытия форм
 const editButton = document.querySelector('.profile__edit-button');
@@ -65,14 +70,20 @@ for (let i = 0; i < initialCards.length; i++) {
   cardItem.querySelector('.elements__heading').textContent = initialCards[i].name;
   elements.append(cardItem);
 }
-//Кнопки лайка и удаления появились - добавляем для них функции
+//Появились кнопки удаления, лайка и кнопка для раскрытия картинки - добавляем для них функции
 const likeButtons = document.querySelectorAll('.elements__like-button');
 const deleteButtons = document.querySelectorAll('.elements__delete-button');
+const imageButtons = document.querySelectorAll('.elements__image-button');
 function toggleLike(evt) {
   evt.target.classList.toggle('elements__like-button_active');
 }
 function deleteCard(evt) {
   evt.target.closest('.elements__item').remove();
+}
+function openImage(evt) {
+  togglePopup(openPhotoPopup);
+  photo.src = evt.target.src;
+  heading.textContent = evt.target.parentElement.nextElementSibling.textContent;
 }
 
 //Открытие и закрытие форм
@@ -81,7 +92,7 @@ function togglePopup(popup) {
   popup.classList.toggle('popup_opened');
 }
 function closeButtonHandler(evt) {
-  togglePopup(evt.target.parentElement.parentElement);
+  togglePopup(evt.target.closest('.popup'));
 }
 
 //Открытие формы "Редактировать профиль" с автозаполнением имеющихся данных
@@ -108,6 +119,7 @@ function addPhotoFormSubmitHandler(evt) {
   cardItem.querySelector('.elements__heading').textContent = placeInput.value;
   cardItem.querySelector('.elements__like-button').addEventListener('click', toggleLike);
   cardItem.querySelector('.elements__delete-button').addEventListener('click', deleteCard);
+  cardItem.querySelector('.elements__image-button').addEventListener('click', openImage);
   elements.prepend(cardItem);
   linkInput.value = '';
   placeInput.value = '';
@@ -127,4 +139,7 @@ likeButtons.forEach(function(button) {
 })
 deleteButtons.forEach(function(button) {
   button.addEventListener('click', deleteCard);
+})
+imageButtons.forEach(function(button) {
+  button.addEventListener('click', openImage);
 })

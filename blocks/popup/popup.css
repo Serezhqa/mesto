@@ -2,15 +2,19 @@
 @import url(_opened/popup_opened.css);
 @import url(_type/popup_type_edit-info.css);
 @import url(_type/popup_type_add-photo.css);
+@import url(_type/popup_type_open-photo.css);
 @import url(__form/popup__form.css);
-@import url(__form/_type/popup__form_type_edit-info.css);
-@import url(__form/_type/popup__form_type_add-photo.css);
 @import url(__title/popup__title.css);
 @import url(__input-item/popup__input-item.css);
 @import url(__input-item/_type/popup__input-item_type_username.css);
 @import url(__input-item/_type/popup__input-item_type_description.css);
+@import url(__input-item/_type/popup__input-item_type_place.css);
+@import url(__input-item/_type/popup__input-item_type_link.css);
 @import url(__save-button/popup__save-button.css);
 @import url(__close-button/popup__close-button.css);
+@import url(__photo-container/popup__photo-container.css);
+@import url(__image/popup__image.css);
+@import url(__heading/popup__heading.css);
 
 .popup {
   position: fixed;
@@ -18,6 +22,5 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
 }
