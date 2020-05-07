@@ -142,6 +142,11 @@ function openEditInfoForm() {
   togglePopup(editInfoPopup);
   nameInput.value = profileName.textContent;
   descriptionInput.value = profileDescription.textContent;
+  //В файле validate.js обработчик слушает событие input, а в строчках выше значение value меняется программно (по условию из предыдущих спринтов).
+  //Чтобы обработчик отрабатывал корректно, вызываю событие input вручную:
+  const event = new Event('input');
+  nameInput.dispatchEvent(event);
+  descriptionInput.dispatchEvent(event);
 }
 
 function formIsValid(evt) {
