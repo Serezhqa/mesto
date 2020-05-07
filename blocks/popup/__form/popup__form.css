@@ -12,6 +12,10 @@
   display: flex;
 }
 
+.popup__form:hover {
+  cursor: default;
+}
+
 @media screen and (max-width: 767px) {
   .popup__form {
     flex-basis: 343px;

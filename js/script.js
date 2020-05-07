@@ -3,14 +3,14 @@ const editInfoPopup = document.querySelector('.popup_type_edit-info');
 const editInfoForm = editInfoPopup.querySelector('.popup__form');
 const profileName = document.querySelector('.profile__name');
 const profileDescription = document.querySelector('.profile__description');
-const nameInput = editInfoPopup.querySelector('.popup__input-item_type_username');
-const descriptionInput = editInfoPopup.querySelector('.popup__input-item_type_description');
+const nameInput = editInfoPopup.querySelector('.popup__input_type_username');
+const descriptionInput = editInfoPopup.querySelector('.popup__input_type_description');
 
 //Для попапа "Новое место"
 const addPhotoPopup = document.querySelector('.popup_type_add-photo');
 const addPhotoForm = addPhotoPopup.querySelector('.popup__form');
-const placeInput = addPhotoPopup.querySelector('.popup__input-item_type_place');
-const linkInput = addPhotoPopup.querySelector('.popup__input-item_type_link');
+const placeInput = addPhotoPopup.querySelector('.popup__input_type_place');
+const linkInput = addPhotoPopup.querySelector('.popup__input_type_link');
 
 //Для попапа с увеличенным фото
 const openPhotoPopup = document.querySelector('.popup_type_open-photo');
@@ -21,7 +21,8 @@ const heading = openPhotoPopup.querySelector('.popup__heading');
 const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
 
-//Все кнопки закрытия форм
+//Все попапы и кнопки закрытия форм
+const popups = document.querySelectorAll('.popup');
 const closeButtons = document.querySelectorAll('.popup__close-button');
 
 //Для начальной загрузки фотографий
@@ -68,9 +69,6 @@ function createCard(src, alt, text) {
   cardItem.querySelector('.elements__image').src = src;
   cardItem.querySelector('.elements__image').alt = alt;
   cardItem.querySelector('.elements__heading').textContent = text;
-  cardItem.querySelector('.elements__like-button').addEventListener('click', toggleLike);
-  cardItem.querySelector('.elements__delete-button').addEventListener('click', deleteCard);
-  cardItem.querySelector('.elements__image-button').addEventListener('click', openImage);
   return cardItem;
 }
 
@@ -82,12 +80,16 @@ function renderCards(arr) {
 }
 
 function deleteCard(evt) {
-  evt.target.closest('.elements__item').remove();
+  if (evt.target.classList.contains('elements__delete-button')) {
+    evt.target.closest('.elements__item').remove();
+  }
 }
 
 //Для лайков
 function toggleLike(evt) {
-  evt.target.classList.toggle('elements__like-button_active');
+  if (evt.target.classList.contains('elements__like-button')) {
+    evt.target.classList.toggle('elements__like-button_active');
+  }
 }
 
 //Открытие и закрытие форм
@@ -95,16 +97,44 @@ function togglePopup(popup) {
   popup.classList.toggle('popup_opened');
 }
 
+//Закрытие нажатием на крестик
 function closeButtonHandler(evt) {
   togglePopup(evt.target.closest('.popup'));
 }
 
-//Для клика по картинке
+//Закрытие нажатием вне формы
+function overlayClickHandler(evt) {
+  if (evt.target === evt.currentTarget) {
+    togglePopup(evt.currentTarget);
+  }
+}
+
+//Закрытие нажатием Esc
+function overlayEscHandler(evt) {
+  if (evt.key === 'Escape') {
+    const popup = document.querySelector('.popup_opened');
+    if (popup) {
+      togglePopup(popup);
+    }
+  }
+}
+
+/*Для клика по картинке
+(если кликать мышкой, то evt.target - это img,
+а если через TAB и пробел/Enter, то evt.target - это button,
+поэтому рассматриваю оба случая*/
 function openImage(evt) {
-  togglePopup(openPhotoPopup);
-  photo.src = evt.target.src;
-  photo.alt = evt.target.alt;
-  heading.textContent = evt.target.parentElement.nextElementSibling.textContent;
+  if (evt.target.classList.contains('elements__image')) {
+    togglePopup(openPhotoPopup);
+    photo.src = evt.target.src;
+    photo.alt = evt.target.alt;
+    heading.textContent = evt.target.parentElement.nextElementSibling.textContent;
+  } else if (evt.target.classList.contains('elements__image-button')) {
+    togglePopup(openPhotoPopup);
+    photo.src = evt.target.firstElementChild.src;
+    photo.alt = evt.target.firstElementChild.alt;
+    heading.textContent = evt.target.nextElementSibling.textContent;
+  }
 }
 
 //Для открытия формы "Редактировать профиль" с автозаполнением имеющихся данных
@@ -114,12 +144,20 @@ function openEditInfoForm() {
   descriptionInput.value = profileDescription.textContent;
 }
 
+function formIsValid(evt) {
+  const submitButton = evt.target.lastElementChild.previousElementSibling;
+  return !submitButton.classList.contains('popup__save-button_disabled');
+}
+
 //Для сохранения введённых в форму "Редактировать профиль" данных и обновления их на странице
 function editInfoFormSubmitHandler(evt) {
   evt.preventDefault();
-  profileName.textContent = nameInput.value;
-  profileDescription.textContent = descriptionInput.value;
-  togglePopup(editInfoPopup);
+  //Все дальнейшие действия при клике на кнопку возможны только если она активна
+  if (formIsValid(evt)) {
+    profileName.textContent = nameInput.value;
+    profileDescription.textContent = descriptionInput.value;
+    togglePopup(editInfoPopup);
+  }
 }
 
 //Для добавления фотокарточек с помощью формы "Новое место"
@@ -131,9 +169,12 @@ function addCard(card) {
 
 function addPhotoFormSubmitHandler(evt) {
   evt.preventDefault();
-  const cardItem = createCard(linkInput.value, placeInput.value, placeInput.value);
-  addCard(cardItem);
-  togglePopup(addPhotoPopup);
+  //Все дальнейшие действия при клике на кнопку возможны только если она активна
+  if (formIsValid(evt)) {
+    const cardItem = createCard(linkInput.value, placeInput.value, placeInput.value);
+    addCard(cardItem);
+    togglePopup(addPhotoPopup);
+  }
 }
 
 
@@ -141,11 +182,14 @@ function addPhotoFormSubmitHandler(evt) {
 //Слушатели событий
 editButton.addEventListener('click', openEditInfoForm);
 addButton.addEventListener('click', () => togglePopup(addPhotoPopup));
+elements.addEventListener('click', toggleLike);
+elements.addEventListener('click', deleteCard);
+elements.addEventListener('click', openImage);
 editInfoForm.addEventListener('submit', editInfoFormSubmitHandler);
 addPhotoForm.addEventListener('submit', addPhotoFormSubmitHandler);
-closeButtons.forEach(function(button) {
-  button.addEventListener('click', closeButtonHandler);
-});
+closeButtons.forEach(button => button.addEventListener('click', closeButtonHandler));
+popups.forEach(popup => popup.addEventListener('click', overlayClickHandler));
+document.addEventListener('keydown', overlayEscHandler);
 
 
 

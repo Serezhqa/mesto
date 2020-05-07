@@ -2,3 +2,7 @@
   margin: auto;
   position: relative;
 }
+
+.popup__photo-container:hover {
+  cursor: default;
+}

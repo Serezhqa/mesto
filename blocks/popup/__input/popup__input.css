@@ -1,4 +1,4 @@
-.popup__input-item {
+.popup__input {
   border: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   padding: 0;
@@ -14,11 +14,11 @@
   width: 100%;
 }
 
-.popup__input-item:last-of-type {
+.popup__input:last-of-type {
   margin-bottom: 0;
 }
 
-.popup__input-item::placeholder {
+.popup__input::placeholder {
   color: #c4c4c4;
   font-family: 'Inter', Arial, sans-serif;
   font-style: normal;
@@ -28,11 +28,11 @@
 }
 
 @media screen and (max-width: 424px) {
-  .popup__input-item {
+  .popup__input {
     margin-bottom: 20px;
   }
 
-  .popup__input-item::placeholder {
+  .popup__input::placeholder {
     font-size: 0.75rem;
     line-height: 0.9375rem;
   }
