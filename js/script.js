@@ -73,10 +73,7 @@ function createCard(src, alt, text) {
 }
 
 function renderCards(arr) {
-  for (let i = 0; i < arr.length; i++) {
-    const cardItem = createCard(arr[i].link, arr[i].alt, arr[i].name);
-    elements.append(cardItem);
-  }
+  arr.forEach(({link, alt, name}) => elements.append(createCard(link, alt, name)));
 }
 
 function deleteCard(evt) {
@@ -95,6 +92,13 @@ function toggleLike(evt) {
 //Открытие и закрытие форм
 function togglePopup(popup) {
   popup.classList.toggle('popup_opened');
+  if (popup.classList.contains('popup_opened')) {
+    document.addEventListener('keydown', overlayEscHandler);
+    popup.addEventListener('click', overlayClickHandler);
+  } else {
+    document.removeEventListener('keydown', overlayEscHandler);
+    popup.removeEventListener('click', overlayClickHandler);
+  }
 }
 
 //Закрытие нажатием на крестик
@@ -112,10 +116,7 @@ function overlayClickHandler(evt) {
 //Закрытие нажатием Esc
 function overlayEscHandler(evt) {
   if (evt.key === 'Escape') {
-    const popup = document.querySelector('.popup_opened');
-    if (popup) {
-      togglePopup(popup);
-    }
+    togglePopup(document.querySelector('.popup_opened'));
   }
 }
 
@@ -125,44 +126,41 @@ function overlayEscHandler(evt) {
 поэтому рассматриваю оба случая*/
 function openImage(evt) {
   if (evt.target.classList.contains('elements__image')) {
-    togglePopup(openPhotoPopup);
     photo.src = evt.target.src;
     photo.alt = evt.target.alt;
     heading.textContent = evt.target.parentElement.nextElementSibling.textContent;
-  } else if (evt.target.classList.contains('elements__image-button')) {
     togglePopup(openPhotoPopup);
+  } else if (evt.target.classList.contains('elements__image-button')) {
     photo.src = evt.target.firstElementChild.src;
     photo.alt = evt.target.firstElementChild.alt;
     heading.textContent = evt.target.nextElementSibling.textContent;
+    togglePopup(openPhotoPopup);
   }
 }
 
 //Для открытия формы "Редактировать профиль" с автозаполнением имеющихся данных
 function openEditInfoForm() {
-  togglePopup(editInfoPopup);
   nameInput.value = profileName.textContent;
   descriptionInput.value = profileDescription.textContent;
-  //В файле validate.js обработчик слушает событие input, а в строчках выше значение value меняется программно (по условию из предыдущих спринтов).
-  //Чтобы обработчик отрабатывал корректно, вызываю событие input вручную:
+  togglePopup(editInfoPopup);
+  /*В файле validate.js обработчик слушает событие input, а в строчках выше значение value меняется программно (по условию из предыдущих спринтов).
+    Чтобы обработчик отрабатывал корректно, вызываю событие input вручную. Это нужно для предотвращения двух ситуаций.
+      1) Пользователь может открыть окно редактирования, указать невалидные данные (кнопка заблокируется), а потом закрыть окно.
+         При следующем открытии окна значения обоих input-ов снова заменятся на валидные (из-за кода выше),
+         но кнопка так и останется заблокированной, ведь события input не было.
+      2) Изначально после загрузки страницы оба input-а пусты, а заполняются значениями только после открытия формы, что приводит к тому,
+         что пользователь, вообще впервые открывший форму, увидел бы заблокированную кнопку при валидных значениях.*/
   const event = new Event('input');
   nameInput.dispatchEvent(event);
   descriptionInput.dispatchEvent(event);
 }
 
-function formIsValid(evt) {
-  const submitButton = evt.target.lastElementChild.previousElementSibling;
-  return !submitButton.classList.contains('popup__save-button_disabled');
-}
-
 //Для сохранения введённых в форму "Редактировать профиль" данных и обновления их на странице
 function editInfoFormSubmitHandler(evt) {
   evt.preventDefault();
-  //Все дальнейшие действия при клике на кнопку возможны только если она активна
-  if (formIsValid(evt)) {
-    profileName.textContent = nameInput.value;
-    profileDescription.textContent = descriptionInput.value;
-    togglePopup(editInfoPopup);
-  }
+  profileName.textContent = nameInput.value;
+  profileDescription.textContent = descriptionInput.value;
+  togglePopup(editInfoPopup);
 }
 
 //Для добавления фотокарточек с помощью формы "Новое место"
@@ -174,12 +172,9 @@ function addCard(card) {
 
 function addPhotoFormSubmitHandler(evt) {
   evt.preventDefault();
-  //Все дальнейшие действия при клике на кнопку возможны только если она активна
-  if (formIsValid(evt)) {
-    const cardItem = createCard(linkInput.value, placeInput.value, placeInput.value);
-    addCard(cardItem);
-    togglePopup(addPhotoPopup);
-  }
+  const cardItem = createCard(linkInput.value, placeInput.value, placeInput.value);
+  addCard(cardItem);
+  togglePopup(addPhotoPopup);
 }
 
 
@@ -193,8 +188,6 @@ elements.addEventListener('click', openImage);
 editInfoForm.addEventListener('submit', editInfoFormSubmitHandler);
 addPhotoForm.addEventListener('submit', addPhotoFormSubmitHandler);
 closeButtons.forEach(button => button.addEventListener('click', closeButtonHandler));
-popups.forEach(popup => popup.addEventListener('click', overlayClickHandler));
-document.addEventListener('keydown', overlayEscHandler);
 
 
 

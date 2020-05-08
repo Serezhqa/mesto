@@ -12,11 +12,11 @@ function hideInputError(form, input, inputErrorClass, textErrorClass) {
   errorElement.classList.remove(textErrorClass);
 }
 
-function checkInputValidity(form, input, properties) {
+function checkInputValidity(form, input, {inputErrorClass, textErrorClass}) {
   if (!input.validity.valid) {
-    showInputError(form, input, input.validationMessage, properties.inputErrorClass, properties.textErrorClass);
+    showInputError(form, input, input.validationMessage, inputErrorClass, textErrorClass);
   } else {
-    hideInputError(form, input, properties.inputErrorClass, properties.textErrorClass);
+    hideInputError(form, input, inputErrorClass, textErrorClass);
   }
 }
 
@@ -32,27 +32,27 @@ function toggleButtonState(inputList, button, inactiveButtonClass) {
   }
 }
 
-function setEventListeners(form, properties) {
-  const inputList = Array.from(form.querySelectorAll(properties.inputSelector));
-  const button = form.querySelector(properties.buttonSelector);
-  toggleButtonState(inputList, button, properties.inactiveButtonClass);
+function setEventListeners(form, {inputSelector, submitButtonSelector, inactiveButtonClass, ...restProperties}) {
+  const inputList = Array.from(form.querySelectorAll(inputSelector));
+  const button = form.querySelector(submitButtonSelector);
+  toggleButtonState(inputList, button, inactiveButtonClass);
   inputList.forEach(input => {
     input.addEventListener('input', () => {
-      checkInputValidity(form, input, properties);
-      toggleButtonState(inputList, button, properties.inactiveButtonClass);
+      checkInputValidity(form, input, restProperties);
+      toggleButtonState(inputList, button, inactiveButtonClass);
     });
   });
 }
 
-function enableValidation(properties) {
-  const formList = Array.from(document.querySelectorAll(properties.formSelector));
-  formList.forEach(form => setEventListeners(form, properties));
+function enableValidation({formSelector, ...restProperties}) {
+  const formList = Array.from(document.querySelectorAll(formSelector));
+  formList.forEach(form => setEventListeners(form, restProperties));
 }
 
 enableValidation({
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
-  buttonSelector: '.popup__save-button',
+  submitButtonSelector: '.popup__save-button',
   inactiveButtonClass: 'popup__save-button_disabled',
   inputErrorClass: 'popup__input_type_error',
   textErrorClass: 'popup__input-error_visible'
