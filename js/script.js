@@ -21,10 +21,6 @@ const heading = openPhotoPopup.querySelector('.popup__heading');
 const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
 
-//Все попапы и кнопки закрытия форм
-const popups = document.querySelectorAll('.popup');
-const closeButtons = document.querySelectorAll('.popup__close-button');
-
 //Для начальной загрузки фотографий
 const cardTemplate = document.querySelector('#card-template').content;
 const elements = document.querySelector('.elements');
@@ -89,18 +85,6 @@ function toggleLike(evt) {
   }
 }
 
-//Открытие и закрытие форм
-function togglePopup(popup) {
-  popup.classList.toggle('popup_opened');
-  if (popup.classList.contains('popup_opened')) {
-    document.addEventListener('keydown', overlayEscHandler);
-    popup.addEventListener('click', overlayClickHandler);
-  } else {
-    document.removeEventListener('keydown', overlayEscHandler);
-    popup.removeEventListener('click', overlayClickHandler);
-  }
-}
-
 //Закрытие нажатием на крестик
 function closeButtonHandler(evt) {
   togglePopup(evt.target.closest('.popup'));
@@ -117,6 +101,20 @@ function overlayClickHandler(evt) {
 function overlayEscHandler(evt) {
   if (evt.key === 'Escape') {
     togglePopup(document.querySelector('.popup_opened'));
+  }
+}
+
+//Открытие и закрытие форм
+function togglePopup(popup) {
+  popup.classList.toggle('popup_opened');
+  if (popup.classList.contains('popup_opened')) {
+    popup.querySelector('.popup__close-button').addEventListener('click', closeButtonHandler);
+    popup.addEventListener('click', overlayClickHandler);
+    document.addEventListener('keydown', overlayEscHandler);
+  } else {
+    popup.querySelector('.popup__close-button').removeEventListener('click', closeButtonHandler);
+    popup.removeEventListener('click', overlayClickHandler);
+    document.removeEventListener('keydown', overlayEscHandler);
   }
 }
 
@@ -142,17 +140,15 @@ function openImage(evt) {
 function openEditInfoForm() {
   nameInput.value = profileName.textContent;
   descriptionInput.value = profileDescription.textContent;
+  //Возможна ситуация, что пользователь ввёл невалидные значения и закрыл окно. Тогда при следующем открытии формы
+  //подтянутся валидные значения (две строчки выше), но текст ошибки останется. Исправим это:
+  if (nameInput.classList.contains('popup__input_type_error')) {
+    hideInputError(editInfoForm, nameInput, 'popup__input_type_error', 'popup__input-error_visible');
+  }
+  if (descriptionInput.classList.contains('popup__input_type_error')) {
+    hideInputError(editInfoForm, descriptionInput, 'popup__input_type_error', 'popup__input-error_visible');
+  }
   togglePopup(editInfoPopup);
-  /*В файле validate.js обработчик слушает событие input, а в строчках выше значение value меняется программно (по условию из предыдущих спринтов).
-    Чтобы обработчик отрабатывал корректно, вызываю событие input вручную. Это нужно для предотвращения двух ситуаций.
-      1) Пользователь может открыть окно редактирования, указать невалидные данные (кнопка заблокируется), а потом закрыть окно.
-         При следующем открытии окна значения обоих input-ов снова заменятся на валидные (из-за кода выше),
-         но кнопка так и останется заблокированной, ведь события input не было.
-      2) Изначально после загрузки страницы оба input-а пусты, а заполняются значениями только после открытия формы, что приводит к тому,
-         что пользователь, вообще впервые открывший форму, увидел бы заблокированную кнопку при валидных значениях.*/
-  const event = new Event('input');
-  nameInput.dispatchEvent(event);
-  descriptionInput.dispatchEvent(event);
 }
 
 //Для сохранения введённых в форму "Редактировать профиль" данных и обновления их на странице
@@ -187,7 +183,6 @@ elements.addEventListener('click', deleteCard);
 elements.addEventListener('click', openImage);
 editInfoForm.addEventListener('submit', editInfoFormSubmitHandler);
 addPhotoForm.addEventListener('submit', addPhotoFormSubmitHandler);
-closeButtons.forEach(button => button.addEventListener('click', closeButtonHandler));
 
 
 

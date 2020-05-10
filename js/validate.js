@@ -24,11 +24,19 @@ function hasInvalidInput(inputList) {
   return inputList.some(input => !input.validity.valid);
 }
 
-function toggleButtonState(inputList, button, inactiveButtonClass) {
-  if (hasInvalidInput(inputList)) {
+function toggleInactiveButtonClass(button, formInvalid, inactiveButtonClass) {
+  if (formInvalid) {
     button.classList.add(inactiveButtonClass);
   } else {
     button.classList.remove(inactiveButtonClass);
+  }
+}
+
+function toggleButtonState(inputList, button, inactiveButtonClass) {
+  if (hasInvalidInput(inputList)) {
+    toggleInactiveButtonClass(button, true, inactiveButtonClass);
+  } else {
+    toggleInactiveButtonClass(button, false, inactiveButtonClass);
   }
 }
 
