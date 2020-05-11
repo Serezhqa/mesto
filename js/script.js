@@ -21,6 +21,10 @@ const heading = openPhotoPopup.querySelector('.popup__heading');
 const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
 
+//Все кнопки отправки форм
+const editInfoSubmitButton = editInfoForm.querySelector('.popup__save-button');
+const addPhotoSubmitButton = addPhotoForm.querySelector('.popup__save-button');
+
 //Для начальной загрузки фотографий
 const cardTemplate = document.querySelector('#card-template').content;
 const elements = document.querySelector('.elements');
@@ -126,14 +130,19 @@ function openImage(evt) {
   if (evt.target.classList.contains('elements__image')) {
     photo.src = evt.target.src;
     photo.alt = evt.target.alt;
-    heading.textContent = evt.target.parentElement.nextElementSibling.textContent;
+    heading.textContent = evt.target.alt;
     togglePopup(openPhotoPopup);
   } else if (evt.target.classList.contains('elements__image-button')) {
     photo.src = evt.target.firstElementChild.src;
     photo.alt = evt.target.firstElementChild.alt;
-    heading.textContent = evt.target.nextElementSibling.textContent;
+    heading.textContent = evt.target.firstElementChild.alt;
     togglePopup(openPhotoPopup);
   }
+}
+
+//Получение всех инпутов формы
+function getFormInputs(form) {
+  return Array.from(form.querySelectorAll('.popup__input'));
 }
 
 //Для открытия формы "Редактировать профиль" с автозаполнением имеющихся данных
@@ -142,13 +151,27 @@ function openEditInfoForm() {
   descriptionInput.value = profileDescription.textContent;
   //Возможна ситуация, что пользователь ввёл невалидные значения и закрыл окно. Тогда при следующем открытии формы
   //подтянутся валидные значения (две строчки выше), но текст ошибки останется. Исправим это:
-  if (nameInput.classList.contains('popup__input_type_error')) {
-    hideInputError(editInfoForm, nameInput, 'popup__input_type_error', 'popup__input-error_visible');
-  }
-  if (descriptionInput.classList.contains('popup__input_type_error')) {
-    hideInputError(editInfoForm, descriptionInput, 'popup__input_type_error', 'popup__input-error_visible');
-  }
+  const inputs = getFormInputs(editInfoForm);
+  inputs.forEach(input => {
+    if (input.classList.contains('popup__input_type_error')) {
+      hideInputError(editInfoForm, input, 'popup__input_type_error', 'popup__input-error_visible');
+    }
+  });
+  //Отключаем кнопку - незачем сохранять данные, которые не менялись
+  toggleInactiveButtonClass(editInfoSubmitButton, true, 'popup__save-button_disabled');
   togglePopup(editInfoPopup);
+}
+
+function openAddPhotoForm() {
+  //Возможна ситуация, что пользователь хотел добавить фото, ввёл данные, потом стёр их (появилась ошибка) и закрыл окно.
+  //При повторном открытии окна всё ещё будет видна ошибка при чистых полях ввода. Исправим это:
+  const inputs = getFormInputs(addPhotoForm);
+  inputs.forEach(input => {
+    if (input.classList.contains('popup__input_type_error') && input.value === '') {
+      hideInputError(addPhotoForm, input, 'popup__input_type_error', 'popup__input-error_visible');
+    }
+  });
+  togglePopup(addPhotoPopup);
 }
 
 //Для сохранения введённых в форму "Редактировать профиль" данных и обновления их на странице
@@ -170,6 +193,8 @@ function addPhotoFormSubmitHandler(evt) {
   evt.preventDefault();
   const cardItem = createCard(linkInput.value, placeInput.value, placeInput.value);
   addCard(cardItem);
+  //В функции addCard значения инпутов очищаются, но кнопка остаётся активной, исправим:
+  toggleInactiveButtonClass(addPhotoSubmitButton, true, 'popup__save-button_disabled');
   togglePopup(addPhotoPopup);
 }
 
@@ -177,7 +202,7 @@ function addPhotoFormSubmitHandler(evt) {
 
 //Слушатели событий
 editButton.addEventListener('click', openEditInfoForm);
-addButton.addEventListener('click', () => togglePopup(addPhotoPopup));
+addButton.addEventListener('click', openAddPhotoForm);
 elements.addEventListener('click', toggleLike);
 elements.addEventListener('click', deleteCard);
 elements.addEventListener('click', openImage);
