@@ -140,9 +140,13 @@ function openImage(evt) {
   }
 }
 
-//Получение всех инпутов формы
-function getFormInputs(form) {
-  return Array.from(form.querySelectorAll('.popup__input'));
+function clearErrors(form) {
+  const inputs = Array.from(form.querySelectorAll('.popup__input'));
+  inputs.forEach(input => {
+    if (input.classList.contains('popup__input_type_error')) {
+      hideInputError(form, input, 'popup__input_type_error', 'popup__input-error_visible');
+    }
+  });
 }
 
 //Для открытия формы "Редактировать профиль" с автозаполнением имеющихся данных
@@ -151,26 +155,20 @@ function openEditInfoForm() {
   descriptionInput.value = profileDescription.textContent;
   //Возможна ситуация, что пользователь ввёл невалидные значения и закрыл окно. Тогда при следующем открытии формы
   //подтянутся валидные значения (две строчки выше), но текст ошибки останется. Исправим это:
-  const inputs = getFormInputs(editInfoForm);
-  inputs.forEach(input => {
-    if (input.classList.contains('popup__input_type_error')) {
-      hideInputError(editInfoForm, input, 'popup__input_type_error', 'popup__input-error_visible');
-    }
-  });
+  clearErrors(editInfoForm);
   //Отключаем кнопку - незачем сохранять данные, которые не менялись
   toggleInactiveButtonClass(editInfoSubmitButton, true, 'popup__save-button_disabled');
   togglePopup(editInfoPopup);
 }
 
 function openAddPhotoForm() {
-  //Возможна ситуация, что пользователь хотел добавить фото, ввёл данные, потом стёр их (появилась ошибка) и закрыл окно.
-  //При повторном открытии окна всё ещё будет видна ошибка при чистых полях ввода. Исправим это:
-  const inputs = getFormInputs(addPhotoForm);
-  inputs.forEach(input => {
-    if (input.classList.contains('popup__input_type_error') && input.value === '') {
-      hideInputError(addPhotoForm, input, 'popup__input_type_error', 'popup__input-error_visible');
-    }
-  });
+  //При каждом открытии очищаем поля, если вдруг там уже что-то было
+  placeInput.value = '';
+  linkInput.value = '';
+  //И убираем ошибки, если они были
+  clearErrors(addPhotoForm);
+  //Т.к. при открытии поля пустые, отключаем кнопку
+  toggleInactiveButtonClass(addPhotoSubmitButton, true, 'popup__save-button_disabled');
   togglePopup(addPhotoPopup);
 }
 
@@ -185,16 +183,12 @@ function editInfoFormSubmitHandler(evt) {
 //Для добавления фотокарточек с помощью формы "Новое место"
 function addCard(card) {
   elements.prepend(card);
-  linkInput.value = '';
-  placeInput.value = '';
 }
 
 function addPhotoFormSubmitHandler(evt) {
   evt.preventDefault();
   const cardItem = createCard(linkInput.value, placeInput.value, placeInput.value);
   addCard(cardItem);
-  //В функции addCard значения инпутов очищаются, но кнопка остаётся активной, исправим:
-  toggleInactiveButtonClass(addPhotoSubmitButton, true, 'popup__save-button_disabled');
   togglePopup(addPhotoPopup);
 }
 
