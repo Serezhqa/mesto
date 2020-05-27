@@ -1,3 +1,6 @@
+import {Card} from './Card.js';
+import {FormValidator} from './FormValidator.js';
+
 //Для попапа "Редактировать профиль"
 const editInfoPopup = document.querySelector('.popup_type_edit-info');
 const editInfoForm = editInfoPopup.querySelector('.popup__form');
@@ -21,72 +24,61 @@ const heading = openPhotoPopup.querySelector('.popup__heading');
 const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
 
-//Все кнопки отправки форм
-const editInfoSubmitButton = editInfoForm.querySelector('.popup__save-button');
-const addPhotoSubmitButton = addPhotoForm.querySelector('.popup__save-button');
+//Для валидации форм
+const editInfoFormValidator = new FormValidator({
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__save-button',
+  inactiveButtonClass: 'popup__save-button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  textErrorClass: 'popup__input-error_visible'
+}, editInfoForm);
+const addPhotoFormValidator = new FormValidator({
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__save-button',
+  inactiveButtonClass: 'popup__save-button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  textErrorClass: 'popup__input-error_visible'
+}, addPhotoForm);
 
 //Для начальной загрузки фотографий
-const cardTemplate = document.querySelector('#card-template').content;
 const elements = document.querySelector('.elements');
 const initialCards = [
   {
       name: 'Милан',
-      link: 'images/Milan.jfif',
-      alt: 'Миланский собор.'
+      link: 'images/Milan.jfif'
   },
   {
       name: 'Верона',
-      link: 'images/Verona.jfif',
-      alt: 'Вид на Верону.'
+      link: 'images/Verona.jfif'
   },
   {
       name: 'Помпеи',
-      link: 'images/Pompei.jfif',
-      alt: 'Вид на Везувий.'
+      link: 'images/Pompei.jfif'
   },
   {
       name: 'Сицилия',
-      link: 'images/Sicily.jfif',
-      alt: 'Вид с горы на побережье Сицилии.'
+      link: 'images/Sicily.jfif'
   },
   {
       name: 'Флоренция',
-      link: 'images/Florence.jfif',
-      alt: 'Вид с моста на Санта-Мария-дель-Фьоре.'
+      link: 'images/Florence.jfif'
   },
   {
       name: 'Рим',
-      link: 'images/Rome.jfif',
-      alt: 'Руины древнего Рима.'
+      link: 'images/Rome.jfif'
   }
 ];
 
 
 
-//Функции для создания/удаления карточки и начальной инициализации из массива
-function createCard(src, alt, text) {
-  const cardItem = cardTemplate.cloneNode(true);
-  cardItem.querySelector('.elements__image').src = src;
-  cardItem.querySelector('.elements__image').alt = alt;
-  cardItem.querySelector('.elements__heading').textContent = text;
-  return cardItem;
-}
-
-function renderCards(arr) {
-  arr.forEach(({link, alt, name}) => elements.append(createCard(link, alt, name)));
-}
-
-function deleteCard(evt) {
-  if (evt.target.classList.contains('elements__delete-button')) {
-    evt.target.closest('.elements__item').remove();
-  }
-}
-
-//Для лайков
-function toggleLike(evt) {
-  if (evt.target.classList.contains('elements__like-button')) {
-    evt.target.classList.toggle('elements__like-button_active');
-  }
+//Отрисовка начальных карточек
+function renderInitialCards(arr) {
+  arr.forEach(item => {
+    let card = new Card(item, '#card-template').createCard();
+    elements.append(card);
+  });
 }
 
 //Закрытие нажатием на крестик
@@ -140,13 +132,24 @@ function openImage(evt) {
   }
 }
 
+//Для очистки ошибок, оставшихся с предыдущего заполнения формы
 function clearErrors(form) {
   const inputs = Array.from(form.querySelectorAll('.popup__input'));
   inputs.forEach(input => {
     if (input.classList.contains('popup__input_type_error')) {
-      hideInputError(form, input, 'popup__input_type_error', 'popup__input-error_visible');
+    input.classList.remove('popup__input_type_error');
+    const errorElement = form.querySelector(`#${input.id}-error`);
+    errorElement.textContent = '';
+    errorElement.classList.remove('popup__input-error_visible');
     }
   });
+}
+
+//Для отключения кнопки при открытии формы
+function disableButton(form) {
+  const submitButton = form.querySelector('.popup__save-button');
+  submitButton.classList.add('popup__save-button_disabled');
+  submitButton.setAttribute('disabled', true);
 }
 
 //Для открытия формы "Редактировать профиль" с автозаполнением имеющихся данных
@@ -156,11 +159,12 @@ function openEditInfoForm() {
   //Возможна ситуация, что пользователь ввёл невалидные значения и закрыл окно. Тогда при следующем открытии формы
   //подтянутся валидные значения (две строчки выше), но текст ошибки останется. Исправим это:
   clearErrors(editInfoForm);
-  //Отключаем кнопку - незачем сохранять данные, которые не менялись
-  toggleInactiveButtonClass(editInfoSubmitButton, true, 'popup__save-button_disabled');
+  //Отключаем кнопку - незачем сохранять данные, которые пока не изменились
+  disableButton(editInfoForm);
   togglePopup(editInfoPopup);
 }
 
+//Для открытия формы добавления фото
 function openAddPhotoForm() {
   //При каждом открытии очищаем поля, если вдруг там уже что-то было
   placeInput.value = '';
@@ -168,7 +172,7 @@ function openAddPhotoForm() {
   //И убираем ошибки, если они были
   clearErrors(addPhotoForm);
   //Т.к. при открытии поля пустые, отключаем кнопку
-  toggleInactiveButtonClass(addPhotoSubmitButton, true, 'popup__save-button_disabled');
+  disableButton(addPhotoForm);
   togglePopup(addPhotoPopup);
 }
 
@@ -180,15 +184,14 @@ function editInfoFormSubmitHandler(evt) {
   togglePopup(editInfoPopup);
 }
 
-//Для добавления фотокарточек с помощью формы "Новое место"
-function addCard(card) {
-  elements.prepend(card);
-}
-
+//Для создания новой карточки и добавления её на страницу
 function addPhotoFormSubmitHandler(evt) {
   evt.preventDefault();
-  const cardItem = createCard(linkInput.value, placeInput.value, placeInput.value);
-  addCard(cardItem);
+  const card = new Card({
+    name: placeInput.value,
+    link: linkInput.value
+  }, '#card-template').createCard();
+  elements.prepend(card);
   togglePopup(addPhotoPopup);
 }
 
@@ -197,8 +200,6 @@ function addPhotoFormSubmitHandler(evt) {
 //Слушатели событий
 editButton.addEventListener('click', openEditInfoForm);
 addButton.addEventListener('click', openAddPhotoForm);
-elements.addEventListener('click', toggleLike);
-elements.addEventListener('click', deleteCard);
 elements.addEventListener('click', openImage);
 editInfoForm.addEventListener('submit', editInfoFormSubmitHandler);
 addPhotoForm.addEventListener('submit', addPhotoFormSubmitHandler);
@@ -206,4 +207,8 @@ addPhotoForm.addEventListener('submit', addPhotoFormSubmitHandler);
 
 
 //Создание начальных карточек
-renderCards(initialCards);
+renderInitialCards(initialCards);
+
+//Запуск валидации форм
+editInfoFormValidator.enableValidation();
+addPhotoFormValidator.enableValidation();
