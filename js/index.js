@@ -16,31 +16,25 @@ const placeInput = addPhotoPopup.querySelector('.popup__input_type_place');
 const linkInput = addPhotoPopup.querySelector('.popup__input_type_link');
 
 //Для попапа с увеличенным фото
-const openPhotoPopup = document.querySelector('.popup_type_open-photo');
-const photo = openPhotoPopup.querySelector('.popup__image');
-const heading = openPhotoPopup.querySelector('.popup__heading');
+export const openPhotoPopup = document.querySelector('.popup_type_open-photo');
+export const photo = openPhotoPopup.querySelector('.popup__image');
+export const heading = openPhotoPopup.querySelector('.popup__heading');
 
 //Все кнопки открытия форм
 const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
 
 //Для валидации форм
-const editInfoFormValidator = new FormValidator({
+const validationProperties = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
   submitButtonSelector: '.popup__save-button',
   inactiveButtonClass: 'popup__save-button_disabled',
   inputErrorClass: 'popup__input_type_error',
   textErrorClass: 'popup__input-error_visible'
-}, editInfoForm);
-const addPhotoFormValidator = new FormValidator({
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__save-button',
-  inactiveButtonClass: 'popup__save-button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  textErrorClass: 'popup__input-error_visible'
-}, addPhotoForm);
+};
+const editInfoFormValidator = new FormValidator(validationProperties, editInfoForm);
+const addPhotoFormValidator = new FormValidator(validationProperties, addPhotoForm);
 
 //Для начальной загрузки фотографий
 const elements = document.querySelector('.elements');
@@ -101,7 +95,7 @@ function overlayEscHandler(evt) {
 }
 
 //Открытие и закрытие форм
-function togglePopup(popup) {
+export function togglePopup(popup) {
   popup.classList.toggle('popup_opened');
   if (popup.classList.contains('popup_opened')) {
     popup.querySelector('.popup__close-button').addEventListener('click', closeButtonHandler);
@@ -111,24 +105,6 @@ function togglePopup(popup) {
     popup.querySelector('.popup__close-button').removeEventListener('click', closeButtonHandler);
     popup.removeEventListener('click', overlayClickHandler);
     document.removeEventListener('keydown', overlayEscHandler);
-  }
-}
-
-/*Для клика по картинке
-(если кликать мышкой, то evt.target - это img,
-а если через TAB и пробел/Enter, то evt.target - это button,
-поэтому рассматриваю оба случая*/
-function openImage(evt) {
-  if (evt.target.classList.contains('elements__image')) {
-    photo.src = evt.target.src;
-    photo.alt = evt.target.alt;
-    heading.textContent = evt.target.alt;
-    togglePopup(openPhotoPopup);
-  } else if (evt.target.classList.contains('elements__image-button')) {
-    photo.src = evt.target.firstElementChild.src;
-    photo.alt = evt.target.firstElementChild.alt;
-    heading.textContent = evt.target.firstElementChild.alt;
-    togglePopup(openPhotoPopup);
   }
 }
 
@@ -200,7 +176,6 @@ function addPhotoFormSubmitHandler(evt) {
 //Слушатели событий
 editButton.addEventListener('click', openEditInfoForm);
 addButton.addEventListener('click', openAddPhotoForm);
-elements.addEventListener('click', openImage);
 editInfoForm.addEventListener('submit', editInfoFormSubmitHandler);
 addPhotoForm.addEventListener('submit', addPhotoFormSubmitHandler);
 
