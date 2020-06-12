@@ -1,10 +1,9 @@
-import {openPhotoPopup, photo, heading, togglePopup} from './index.js';
-
-export class Card {
-  constructor(data, selector) {
-    this._name = data.name;
-    this._link = data.link;
+export default class Card {
+  constructor({name, link}, selector, handleCardClick) {
+    this._name = name;
+    this._link = link;
     this._selector = selector;
+    this._handleCardClick = handleCardClick;
   }
 
   _getTemplate() {
@@ -19,17 +18,10 @@ export class Card {
     evt.target.closest('.elements__item').remove();
   }
 
-  _openImage(evt) {
-    photo.src = evt.currentTarget.firstElementChild.src;
-    photo.alt = evt.currentTarget.firstElementChild.alt;
-    heading.textContent = evt.currentTarget.firstElementChild.alt;
-    togglePopup(openPhotoPopup);
-}
-
   _setEventListeners() {
     this._card.querySelector('.elements__like-button').addEventListener('click', this._toggleLike);
     this._card.querySelector('.elements__delete-button').addEventListener('click', this._deleteCard);
-    this._card.querySelector('.elements__image-button').addEventListener('click', this._openImage);
+    this._card.querySelector('.elements__image-button').addEventListener('click', this._handleCardClick);
   }
 
   createCard() {
