@@ -1,28 +1,15 @@
 import Popup from './Popup.js';
 
 export default class PopupWithForm extends Popup {
-  constructor(popupSelector, handleFormSubmit, handleOpen = () => {}) {
+  constructor(popupSelector, handleFormSubmit, formValidator, handleOpen = () => {}) {
     super(popupSelector);
     this._handleFormSubmit = handleFormSubmit;
+    this._formValidator = formValidator;
     this._handleOpen = handleOpen;
   }
 
-  _clearErrors() {
-    this._inputList = this._form.querySelectorAll('.popup__input');
-    this._inputList.forEach(input => {
-      if (input.classList.contains('popup__input_type_error')) {
-        input.classList.remove('popup__input_type_error');
-        const errorElement = this._form.querySelector(`#${input.id}-error`);
-        errorElement.textContent = '';
-        errorElement.classList.remove('popup__input-error_visible');
-        }
-    });
-    this._submitButton = this._form.querySelector('.popup__save-button');
-    this._submitButton.classList.add('popup__save-button_disabled');
-    this._submitButton.setAttribute('disabled', true);
-  }
-
   _getInputValues() {
+    this._inputList = this._form.querySelectorAll('.popup__input');
     this._formValues = {};
     this._inputList.forEach(input => this._formValues[input.name] = input.value);
     return this._formValues;
@@ -40,7 +27,7 @@ export default class PopupWithForm extends Popup {
   }
 
   open() {
-    this._clearErrors();
+    this._formValidator.clearErrors();
     this._handleOpen();
     super.open();
   }

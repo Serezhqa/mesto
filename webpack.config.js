@@ -16,8 +16,12 @@ module.exports = {
         exclude: '/node_modules/'
       },
       {
-        test: /\.(png|svg|jpe?g|gif|jfif|woff|woff2)$/,
-        loader: 'file-loader'
+        test: /\.(png|svg|jpe?g|gif|jfif)$/,
+        loader: 'file-loader?name=./images/[name].[ext]'
+      },
+      {
+        test: /\.(woff|woff2)$/,
+        loader: 'file-loader?name=./vendor/[name].[ext]'
       },
       {
         test: /\.html$/,

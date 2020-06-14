@@ -5,18 +5,6 @@ import pompeiImage from '../images/Pompei.jfif';
 import veronaImage from '../images/Verona.jfif';
 import milanImage from '../images/Milan.jfif';
 
-//Для попапа "Редактировать профиль"
-const editInfoPopup = document.querySelector('.popup_type_edit-info');
-export const editInfoForm = editInfoPopup.querySelector('.popup__form');
-
-//Для попапа "Новое место"
-const addPhotoPopup = document.querySelector('.popup_type_add-photo');
-export const addPhotoForm = addPhotoPopup.querySelector('.popup__form');
-
-//Все кнопки открытия форм
-export const editButton = document.querySelector('.profile__edit-button');
-export const addButton = document.querySelector('.profile__add-button');
-
 //Для валидации форм
 export const validationProperties = {
   formSelector: '.popup__form',
