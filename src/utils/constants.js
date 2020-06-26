@@ -1,10 +1,3 @@
-import romeImage from '../images/Rome.jfif';
-import florenceImage from '../images/Florence.jfif';
-import sicilyImage from '../images/Sicily.jfif';
-import pompeiImage from '../images/Pompei.jfif';
-import veronaImage from '../images/Verona.jfif';
-import milanImage from '../images/Milan.jfif';
-
 //Для валидации форм
 export const validationProperties = {
   formSelector: '.popup__form',
@@ -15,31 +8,6 @@ export const validationProperties = {
   textErrorClass: 'popup__input-error_visible'
 };
 
-//Для начальной загрузки фотографий
-export const cardListSelector = ('.elements');
-export const initialCards = [
-  {
-    name: 'Рим',
-    link: romeImage
-  },
-  {
-    name: 'Флоренция',
-    link: florenceImage
-  },
-  {
-    name: 'Сицилия',
-    link: sicilyImage
-  },
-  {
-    name: 'Помпеи',
-    link: pompeiImage
-  },
-  {
-    name: 'Верона',
-    link: veronaImage
-  },
-  {
-    name: 'Милан',
-    link: milanImage
-  }
-];
+//Базовый URL для запросов
+export const baseURL = 'https://mesto.nomoreparties.co/v1/cohort-12';
+export const token = 'd20b4294-3a82-4b74-a8d9-f1654e520eb0';

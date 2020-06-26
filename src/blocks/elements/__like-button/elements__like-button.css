@@ -1,12 +1,10 @@
 .elements__like-button {
   width: 21px;
   height: 19px;
-  margin-right: 15px;
   padding: 0;
   border: none;
   background-color: #fff;
   background-image: url(../../../images/like-button.svg);
-  display: inline-flex;
 }
 
 .elements__like-button:hover {
