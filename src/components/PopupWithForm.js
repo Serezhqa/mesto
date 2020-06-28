@@ -7,7 +7,6 @@ export default class PopupWithForm extends Popup {
     this._formValidator = formValidator;
     this._handleOpen = handleOpen;
     this._submitButton = this._popup.querySelector('.popup__save-button');
-    this._submitButtonText = this._submitButton.textContent;
   }
 
   _getInputValues() {
@@ -24,14 +23,12 @@ export default class PopupWithForm extends Popup {
       evt.preventDefault();
       this._handleFormSubmit(this._getInputValues());
       this._submitButton.textContent = 'Сохранение...';
-      this._form.reset();
     });
   }
 
   open() {
     this._formValidator.clearErrors();
     this._handleOpen();
-    this._submitButton.textContent = this._submitButtonText;
     super.open();
   }
 

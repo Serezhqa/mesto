@@ -57,5 +57,6 @@ export default class Card {
 
   _removeCard() {
     this._card.remove();
+    this._card = null;
   }
 }
