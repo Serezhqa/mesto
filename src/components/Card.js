@@ -17,18 +17,18 @@ export default class Card {
   }
 
   _toggleLike(evt) {
-    evt.target.classList.toggle('elements__like-button_active');
     this._handleLikeButtonClick(this._cardId, this._likes.some(item => item._id === this._userId))
       .then(result => {
         this._likes = result.likes;
         this._card.querySelector('.elements__like-counter').textContent = result.likes.length;
+        evt.target.classList.toggle('elements__like-button_active');
       })
       .catch(err => console.log(err));
   }
 
   _setEventListeners() {
     this._card.querySelector('.elements__like-button').addEventListener('click', (evt) => this._toggleLike(evt));
-    this._card.querySelector('.elements__delete-button').addEventListener('click', (evt) => this._handleDeleteButtonClick(this._cardId, evt));
+    this._card.querySelector('.elements__delete-button').addEventListener('click', () => this._handleDeleteButtonClick(this._cardId, () => this._removeCard()));
     this._card.querySelector('.elements__image-button').addEventListener('click', () => this._handleCardClick({
       name: this._name,
       link: this._link
@@ -53,5 +53,9 @@ export default class Card {
     this._setEventListeners();
     this._checkId();
     return this._card;
+  }
+
+  _removeCard() {
+    this._card.remove();
   }
 }

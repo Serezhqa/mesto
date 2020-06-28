@@ -9,11 +9,11 @@ export default class Section {
     this._items.forEach(item => this._renderer(item));
   }
 
-  addItem(element, newCard) {
-    if (newCard) {
-      this._container.prepend(element);
-    } else {
-      this._container.append(element);
-    }
+  prependItem(element) {
+    this._container.prepend(element);
+  }
+
+  appendItem(element) {
+    this._container.append(element);
   }
 }

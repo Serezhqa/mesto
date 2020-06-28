@@ -5,8 +5,8 @@ import Card from '../components/Card.js';
 import FormValidator from '../components/FormValidator.js';
 import PopupWithForm from '../components/PopupWithForm.js';
 import PopupWithImage from '../components/PopupWithImage.js';
+import PopupWithConfirm from '../components/PopupWithConfirm.js';
 import UserInfo from '../components/UserInfo.js';
-import Popup from '../components/Popup';
 import Api from '../components/Api';
 
 //Для попапа "Редактировать профиль"
@@ -37,7 +37,7 @@ const createCard = data => new Card(
   userInfo.getUserId(),
   '#card-template',
   ({name, link}) => imagePopup.open(name, link),
-  (id, evt) => confirmDeletePopup.open(id, evt),
+  (id, func) => confirmDeletePopup.open(id, func),
   (id, liked) => api.likeCard(id, liked)
 ).createCard();
 
@@ -49,10 +49,12 @@ const editInfoPopup = new PopupWithForm(
       name: formData.username,
       about: formData.description
     })
-      .then(result => userInfo.setUserInfo(result.name, result.about))
+      .then(result => {
+        userInfo.setUserInfo(result.name, result.about);
+        editInfoPopup.close();
+      })
       .catch(err => console.log(err));
   },
-  true,
   editInfoFormValidator,
   () => {
     const {username, description} = userInfo.getUserInfo();
@@ -65,33 +67,39 @@ const addPhotoPopup = new PopupWithForm(
   '.popup_type_add-photo',
   formData => {
     api.uploadCard(formData)
-      .then(result => cardList.addItem(createCard(result), true))
+      .then(result => {
+        cardList.prependItem(createCard(result));
+        addPhotoPopup.close();
+      })
       .catch(err => console.log(err));
   },
-  true,
   addPhotoFormValidator
 );
 
 const imagePopup = new PopupWithImage('.popup_type_open-photo');
 
-const confirmDeletePopup = new PopupWithForm(
+const confirmDeletePopup = new PopupWithConfirm(
   '.popup_type_delete-photo',
-  (id, evt) => {
+  (id, func) => {
     api.deleteCard(id)
-      .then(result => evt.target.closest('.elements__item').remove())
+      .then(result => {
+        func();
+        confirmDeletePopup.close();
+      })
       .catch(err => console.log(err));
-  },
-  false
+  }
 );
 
 const changeAvatarPopup = new PopupWithForm(
   '.popup_type_change-avatar',
   ({link}) => {
     api.changeAvatar(link)
-      .then(result => userInfo.setUserAvatar(result.avatar))
+      .then(result => {
+        userInfo.setUserAvatar(result.avatar);
+        changeAvatarPopup.close();
+      })
       .catch(err => console.log(err));
   },
-  true,
   changeAvatarFormValidator
 );
 
@@ -111,23 +119,16 @@ let cardList;
 
 
 //Получаем данные пользователя
-api.getUserInfo()
-  .then(({name, about, avatar, _id}) => {
+Promise.all([api.getUserInfo(), api.getInitialCards()])
+  .then(([{name, about, avatar, _id}, initialCards]) => {
     userInfo.setUserInfo(name, about);
     userInfo.setUserAvatar(avatar);
     userInfo.setUserId(_id);
-    /*Отрисовка начальных карточек
-      (только после получения id пользователя,
-       ведь в классе Card используется проверка)*/
-    api.getInitialCards()
-      .then(result => {
-        cardList = new Section({
-          items: result,
-          renderer: item => cardList.addItem(createCard(item, false))
-        }, '.elements');
-        cardList.renderItems();
-      })
-      .catch(err => console.log(err));
+    cardList = new Section({
+      items: initialCards,
+      renderer: item => cardList.appendItem(createCard(item))
+    }, '.elements');
+    cardList.renderItems();
   })
   .catch(err => console.log(err));
 
