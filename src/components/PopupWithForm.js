@@ -1,39 +1,22 @@
-import Popup from './Popup.js';
+import React from 'react';
 
-export default class PopupWithForm extends Popup {
-  constructor(popupSelector, handleFormSubmit, formValidator, handleOpen = () => {}) {
-    super(popupSelector);
-    this._handleFormSubmit = handleFormSubmit;
-    this._formValidator = formValidator;
-    this._handleOpen = handleOpen;
-    this._submitButton = this._popup.querySelector('.popup__save-button');
+class PopupWithForm extends React.Component {
+  constructor(props) {
+    super(props);
   }
 
-  _getInputValues() {
-    this._inputList = this._form.querySelectorAll('.popup__input');
-    this._formValues = {};
-    this._inputList.forEach(input => this._formValues[input.name] = input.value);
-    return this._formValues;
-  }
-
-  _setEventListeners() {
-    super._setEventListeners();
-    this._form = this._popup.querySelector('.popup__form');
-    this._form.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      this._handleFormSubmit(this._getInputValues());
-      this._submitButton.textContent = 'Сохранение...';
-    });
-  }
-
-  open() {
-    this._formValidator.clearErrors();
-    this._handleOpen();
-    super.open();
-  }
-
-  close() {
-    super.close();
-    this._form.reset();
+  render() {
+    return (
+      <div className={this.props.isOpen ? `popup popup_type_${this.props.name} popup_opened` : `popup popup_type_${this.props.name}`}>
+        <form className="popup__form" name={this.props.name} noValidate>
+          <h2 className="popup__title">{this.props.title}</h2>
+          {this.props.children}
+          <button className="popup__save-button" type="submit">Ок</button>
+          <button className="popup__close-button" type="button" onClick={this.props.onClose} aria-label="Закрыть окно."></button>
+        </form>
+      </div>
+    )
   }
 }
+
+export default PopupWithForm;
