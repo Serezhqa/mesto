@@ -1,6 +1,4 @@
-import {baseURL, token} from './utils.js';
-
-class Api {
+export default class Api {
   constructor(baseURL, token) {
     this._baseURL = baseURL;
     this._token = token;
@@ -92,5 +90,3 @@ class Api {
     })
   }
 }
-
-export default new Api(baseURL, token);
