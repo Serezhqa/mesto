@@ -8,4 +8,4 @@
 4. медиазапросы для обеспечения адаптивности;
 5. настроен webpack
 
-Ссылка на GitHub Pages: https://serezhqa.github.io/mesto/index.html
+Ссылка на GitHub Pages: http://serezhqa.github.io/mesto
