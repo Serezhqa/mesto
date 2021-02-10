@@ -9,3 +9,5 @@
 5. настроен webpack
 
 Ссылка на GitHub Pages: http://serezhqa.github.io/mesto
+
+Проект завершён.
